@@ -261,7 +261,7 @@ jobs:
           exit 1
 
       - name: Setup Supabase
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13
         with:
           version: 1.178.1
 
