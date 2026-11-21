@@ -263,7 +263,7 @@ jobs:
       - name: Setup Supabase
         uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13
         with:
-          version: 1.178.1
+          version: 2.121.0
 
       - id: get_date
         name: Get date
@@ -323,7 +323,9 @@ jobs:
         working-directory: .
         run: |
           supabase init
-          supabase start --exclude postgres-meta,realtime,storage-api,imgproxy,inbucket,studio,edge-runtime,logflare,vector,supavisor
+          sed -i -E 's/^[[:space:]]*major_version[[:space:]]*=.*/major_version = 15/' supabase/config.toml
+          grep -qx 'major_version = 15' supabase/config.toml
+          supabase start --exclude postgres-meta,realtime,storage-api,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
           supabase status -o env | sed 's/="/=/; s/"$//' >> $GITHUB_OUTPUT
         # outputs:
         # DB_URL, API_URL, GRAPHQL_URL, ANON_KEY, SERVICE_ROLE_KEY, JWT_SECRET
