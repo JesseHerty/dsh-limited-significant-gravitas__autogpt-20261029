@@ -40,8 +40,18 @@ jobs:
       - name: Start MinIO service
         working-directory: '.'
         run: |
-          docker pull minio/minio:edge-cicd
-          docker run -d -p 9000:9000 minio/minio:edge-cicd
+          minio_image=cgr.dev/chainguard/minio@sha256:e9cf6b99c226e9539ed0f14b6f00e37b07da153c7ba1f4f8709c807574b471ec
+          docker pull "$minio_image"
+          docker run -d --name classic-minio-ci -p 127.0.0.1:9000:9000 \
+            --tmpfs /data:rw,uid=65532,gid=65532,mode=0700 \
+            -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin \
+            "$minio_image" server /data
+          if ! curl --fail --silent --show-error --max-time 2 \
+            --retry 30 --retry-delay 1 --retry-max-time 45 --retry-connrefused \
+            http://127.0.0.1:9000/minio/health/ready; then
+            docker logs --tail 80 classic-minio-ci
+            exit 1
+          fi
 
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
