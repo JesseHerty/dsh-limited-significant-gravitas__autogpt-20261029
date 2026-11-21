@@ -39,7 +39,7 @@ ENV POETRY_VIRTUALENVS_CREATE=true
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 ENV PATH=/opt/poetry/bin:$PATH
 
-RUN pip3 install poetry --break-system-packages
+RUN pip3 install --break-system-packages 'poetry==2.2.1' 'virtualenv==20.36.1' 'packaging==25.0'
 
 # Copy and install dependencies
 COPY autogpt_platform/autogpt_libs /app/autogpt_platform/autogpt_libs
